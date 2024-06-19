@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: Create comments table
+      author: Mahmud
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  remarks: id of comment
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                  remarks: id of user
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                  remarks: id of product
+              - column:
+                  name: comment
+                  type: text
+                  constraints:
+                  remarks: what wrote user
+              - column:
+                  name: status
+                  type: varchar(16)
+                  constraints:
+                    nullable: false
+                  remarks: status of comment
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+                  remarks: when created
+              - column:
+                  name: modified_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+                  remarks: when modified

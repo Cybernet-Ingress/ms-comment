@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:4445/comments
+    username: postgres
+    password: pass123
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+    enabled: false
