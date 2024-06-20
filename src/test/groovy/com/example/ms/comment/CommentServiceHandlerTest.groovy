@@ -2,8 +2,9 @@ package com.example.ms.comment
 
 import com.example.ms.comment.dao.entity.CommentEntity
 import com.example.ms.comment.dao.repository.CommentRepository
-import com.example.ms.comment.model.enums.CommentStatus
+import com.example.ms.comment.exception.NotFoundException
 import com.example.ms.comment.model.request.AddCommentRequest
+import com.example.ms.comment.model.response.CommentResponse
 import com.example.ms.comment.service.abstraction.CommentService
 import com.example.ms.comment.service.concrete.CommentServiceHandler
 import com.example.ms.comment.util.WeirdCommentUtil
@@ -51,21 +52,49 @@ class CommentServiceHandlerTest extends Specification {
         assert comment.modifiedAt.toLocalDate() == LocalDate.now()
     }
 
-
     def "TestModifyComment success"() {
         given:
         def id = new Random().nextLong()
+        def commentEntity = COMMENT_MAPPER.buildUpdateCommentEntity(commentRequest, id)
         def commentRequest = random.nextObject(AddCommentRequest)
-        def existingComment = random.nextObject(CommentEntity)
-        def updatedComment = random.nextObject(CommentEntity)
 
         when:
         commentService.modifyComment(id, commentRequest)
 
         then:
-        1 * commentRepository.fetchIfCommentExist(id) >> Optional.of(existingComment)
-        1 * commentRepository.save(existingComment) >> Optional.of(updatedComment)
-        assert updatedComment.comment == commentRequest.comment
-        assert existingComment.modifiedAt.toLocalDate() == LocalDate.now()
+        1 * commentRepository.findCommentById(id) >> Optional.of(commentEntity)
+        1 * commentRepository.save(commentEntity)
+        notThrown(NotFoundException)
+        commentEntity.comment == commentRequest.comment
+    }
+
+    def "TestModifyComment error cannot modify comment"() {
+        given:
+        def id = new Random().nextLong()
+        def commentEntity = COMMENT_MAPPER.buildUpdateCommentEntity(commentRequest, id)
+        def commentRequest = random.nextObject(AddCommentRequest)
+
+        when:
+        commentService.modifyComment(id, commentRequest)
+
+        then:
+        1 * commentRepository.findCommentById(id) >> Optional.empty()
+        0 * commentRepository.save(commentEntity)
+        NotFoundException ex = thrown()
+        ex.message == "Comment with given ID not found!"
+    }
+
+    def "TestGetComment"() {
+        given:
+        def id = random.nextLong()
+        def commentRequest = random.nextObject(CommentResponse)
+
+        when:
+        commentMapper.buildCommentResponse(commentRequest) >> expectedResponse
+        def actualResponse = commentService.getComment(id)
+
+        then:
+        1 * commentMapper.buildCommentResponse(commentRequest)
+        actualResponse == expectedResponse
     }
 }
