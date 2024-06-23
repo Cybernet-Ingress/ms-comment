@@ -7,3 +7,5 @@ spring:
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: false
+  jpa:
+    open-in-view: false
