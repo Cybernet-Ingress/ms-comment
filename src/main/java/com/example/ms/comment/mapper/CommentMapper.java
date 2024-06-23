@@ -22,7 +22,7 @@ public enum CommentMapper {
                 .build();
     }
 
-    public CommentEntity buildUpdateCommentEntity(AddCommentRequest request, Long id) {
+    public CommentEntity buildCommentRequest(AddCommentRequest request, Long id) {
         return CommentEntity
                 .builder()
                 .id(id)

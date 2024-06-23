@@ -15,6 +15,7 @@ import java.time.LocalDate;
 
 import static com.example.ms.comment.mapper.CommentMapper.COMMENT_MAPPER;
 import static com.example.ms.comment.model.enums.CommentStatus.DELETED;
+import static com.example.ms.comment.exception.ExceptionConstants.COMMENT_NOT_FOUND_EXCEPTION;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class CommentServiceHandler implements CommentService {
     public void modifyComment(Long id, AddCommentRequest commentRequest) {
         var comment = fetchIfCommentExist(id);
         comment.setComment(commentRequest.getComment());
-        commentRepository.save(COMMENT_MAPPER.buildUpdateCommentEntity(commentRequest, id));
+        commentRepository.save(COMMENT_MAPPER.buildCommentRequest(commentRequest, id));
     }
 
     @Override
@@ -53,6 +54,6 @@ public class CommentServiceHandler implements CommentService {
 
     private CommentEntity fetchIfCommentExist(Long id) {
         return commentRepository.findCommentById(id)
-                .orElseThrow(() -> new NotFoundException("Comment with given ID not found!"));
+                .orElseThrow(() -> new NotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
     }
 }
