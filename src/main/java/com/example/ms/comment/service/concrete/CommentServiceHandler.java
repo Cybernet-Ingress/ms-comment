@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import static com.example.ms.comment.exception.ExceptionConstants.COMMENT_NOT_FOUND_CODE;
 import static com.example.ms.comment.mapper.CommentMapper.COMMENT_MAPPER;
 import static com.example.ms.comment.model.enums.CommentStatus.DELETED;
 import static com.example.ms.comment.exception.ExceptionConstants.COMMENT_NOT_FOUND_EXCEPTION;
@@ -54,6 +55,6 @@ public class CommentServiceHandler implements CommentService {
 
     private CommentEntity fetchIfCommentExist(Long id) {
         return commentRepository.findCommentById(id)
-                .orElseThrow(() -> new NotFoundException(COMMENT_NOT_FOUND_EXCEPTION));
+                .orElseThrow(() -> new NotFoundException(COMMENT_NOT_FOUND_CODE, String.format(COMMENT_NOT_FOUND_EXCEPTION, id)));
     }
 }
